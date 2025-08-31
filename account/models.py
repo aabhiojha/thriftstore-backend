@@ -1,13 +1,9 @@
 from django.db import models
-
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, tc, password=None, password2=None):
-        """
-        Creates and saves a User with the given email, name, tc and password.
-        """
         if not email:
             raise ValueError("User must have an email address")
 
@@ -16,32 +12,25 @@ class UserManager(BaseUserManager):
             name=name,
             tc=tc,
         )
-
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, name, tc, password):
-        """
-        Creates and saves a superuser with the given email, name, tc and password.
-        """
         user = self.create_user(
-            email,
-            password=password,
-            name=name,
-            tc=tc,
+            email=email, name=name, tc=tc, password=password, password2=None
         )
         user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
 
-# Custom User model
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name="email address", max_length=255, unique=True)
     name = models.CharField(max_length=100)
-    tc = models.BooleanField()
-    is_active = models.BooleanField(default=True)
+    tc = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

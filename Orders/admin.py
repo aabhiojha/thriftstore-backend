@@ -60,7 +60,7 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItems)
 class OrderItemsAdmin(admin.ModelAdmin):
     list_display = ["id", "order", "product", "quantity", "get_item_total"]
-    list_filter = ["order__created_at", "product__Category"]
+    list_filter = ["order__created_at", "product__category"]
     search_fields = ["order__id", "product__name", "order__buyer__username"]
     ordering = ["-order__created_at"]
     readonly_fields = ["order", "product", "quantity"]

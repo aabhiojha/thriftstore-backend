@@ -4,7 +4,6 @@ from django.conf import settings
 from Product.models import Product
 
 
-# Create your models here.
 class Order(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),

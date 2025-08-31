@@ -2,11 +2,12 @@ from rest_framework import serializers
 
 from Orders.models import Order, OrderItems
 from Product.models import Product
-from Product.serializers import ProductSerializer
+
+# from Product.serializers import ProductSerializer
 
 
 class OrderItemsSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+    # product = ProductSerializer(read_only=True)
     product_id = serializers.IntegerField(write_only=True)
 
     class Meta:

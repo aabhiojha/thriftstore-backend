@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Django / SQLite
+db.sqlite3
+
+# Migrations (optional if you don’t want to copy them, but usually keep them)
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# VS Code / IDE
+.vscode/
+.idea/
+*.swp
+
+# Git
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+# OS / Misc
+*.DS_Store
+Thumbs.db
