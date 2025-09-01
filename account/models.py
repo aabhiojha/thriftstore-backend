@@ -1,60 +1,53 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
+from django.utils import timezone
 
 
-class UserManager(BaseUserManager):
-    def create_user(self, email, name, tc, password=None, password2=None):
+class CustomUserManager(UserManager):
+    def _create_user(self, email, password, **extra_fields):
         if not email:
-            raise ValueError("User must have an email address")
+            raise ValueError("You have not provided a valid e-mail address")
 
-        user = self.model(
-            email=self.normalize_email(email),
-            name=name,
-            tc=tc,
-        )
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.save(using=self._db)
+        user.save(using=self.db)
         return user
 
-    def create_superuser(self, email, name, tc, password):
-        user = self.create_user(
-            email=email, name=name, tc=tc, password=password, password2=None
-        )
-        user.is_admin = True
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
+    def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractBaseUser):
-    email = models.EmailField(verbose_name="email address", max_length=255, unique=True)
-    name = models.CharField(max_length=100)
-    tc = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.CharField(blank=True, default="", unique=True)
+    name = models.CharField(max_length=255, blank=True, default="")
 
-    objects = UserManager()
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+
+    date_joined = models.DateTimeField(default=timezone.now)
+    last_login = models.DateTimeField(blank=True, null=True)
+
+    objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["name", "tc"]
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = []
 
-    def __str__(self):
-        return self.email
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
+    def get_full_name(self):
+        return self.name
 
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
+    def get_short_name(self):
+        return self.name or self.email.split("@")[0]
