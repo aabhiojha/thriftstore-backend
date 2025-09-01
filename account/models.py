@@ -51,3 +51,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.name or self.email.split("@")[0]
+
+
+class RegularUser(User):
+    class Meta:
+        proxy = True
+        verbose_name = "Regular User"
+        verbose_name_plural = "Regular Users"
+
+
+class SuperUser(User):
+    class Meta:
+        proxy = True
+        verbose_name = "Super User"
+        verbose_name_plural = "Super Users"
