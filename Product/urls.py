@@ -8,5 +8,6 @@ urlpatterns = [
     path("/product/retrieve/<int:pk>", views.ProductRetrieveAPIView.as_view()),
     path("/product/update/<int:pk>", views.ProductUpdateAPIView.as_view()),
     path("/product/delete/<int:pk>", views.ProductDeleteAPIView.as_view()),
-    path("/category", views.CategoryListAPIView.as_view()),
+    path("/category/list", views.CategoryListAPIView.as_view()),
+    path("/category/create", views.CategoryCreateAPIView.as_view()),
 ]

@@ -19,6 +19,8 @@ from .serializers import (
     ProductSerializerForUpdate,
 )
 
+from django.contrib.contenttypes.models import ContentType
+
 from django.shortcuts import get_object_or_404
 
 
@@ -80,3 +82,10 @@ class CategoryListAPIView(APIView):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CategoryCreateAPIView(APIView):
+    def post(self, request):
+        if self.request.user.has_perm("can_create_category"):
+            return Response("User can create category")
+        return Response("User cannot create category")

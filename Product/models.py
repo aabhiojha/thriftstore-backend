@@ -18,6 +18,10 @@ class Category(CreatedAndUpdated):
 
     class Meta:
         verbose_name_plural = "Categories"
+        permissions = [
+            ("can_create_category", "User can Create Category"),
+            ("can_remove_category", "User can remove Category"),
+        ]
 
     def __str__(self):
         return self.name

@@ -25,6 +25,18 @@ class CustomUserManager(UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+class SuperUserManager(CustomUserManager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_superuser=True)
+
+
+class RegularUserManager(CustomUserManager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_superuser=False)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(blank=True, default="", unique=True)
     name = models.CharField(max_length=255, blank=True, default="")
@@ -54,6 +66,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class RegularUser(User):
+    objects = RegularUserManager()
+
     class Meta:
         proxy = True
         verbose_name = "Regular User"
@@ -61,6 +75,8 @@ class RegularUser(User):
 
 
 class SuperUser(User):
+    objects = SuperUserManager()
+
     class Meta:
         proxy = True
         verbose_name = "Super User"
