@@ -20,6 +20,7 @@ from .serializers import (
 )
 
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.shortcuts import get_object_or_404
 
@@ -84,8 +85,17 @@ class CategoryListAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryCreateAPIView(APIView):
+class CategoryCreateAPIView(PermissionRequiredMixin, APIView):
+    permission_required = []
+
     def post(self, request):
         if self.request.user.has_perm("can_create_category"):
-            return Response("User can create category")
-        return Response("User cannot create category")
+            serializer = CategorySerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "User doesn't has permission"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
