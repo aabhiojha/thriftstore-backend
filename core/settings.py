@@ -42,13 +42,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
     "corsheaders",  # cors
     "rest_framework",
-    "django_extensions",
     "account",  # account auth app
     "Product",  # Products app
     "Orders",  # Orders app
-    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -157,6 +156,8 @@ AUTH_USER_MODEL = "account.User"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
@@ -165,16 +166,24 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "Product.pagination.CursorProductPaginationWithOrdering",
     "PAGE_SIZE": 2,
 }
+SPECTACULAR_SETTINGS = {
+    "TITLE": "E-Commerce API",
+    "DESCRIPTION": "E-commerce api with advanced features(still building)",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}
+
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=20),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,

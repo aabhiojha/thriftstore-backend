@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User, PermissionCategory, CustomPermission, Role
 
 
 class UserListSerializer(serializers.ModelSerializer):
@@ -41,3 +41,39 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+# Role model Serializers
+class ListRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = '__all__'
+
+class CreateRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = '__all__'
+
+
+# Permissions model serializers
+class ListPermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomPermission
+        fields = "__all__"
+        
+class CreatePermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomPermission
+        fields = "__all__"
+
+
+# Permission Category model serializer
+class ListPermissionCategorySerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = PermissionCategory
+        fields = "__all__"
+
+class CreatePermissionCategorySerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = PermissionCategory
+        fields = "__all__"

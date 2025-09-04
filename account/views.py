@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser, BasePermission
-from .serializers import UserListSerializer, UserCreateSerializer
+from .serializers import UserListSerializer, UserCreateSerializer, ListRoleSerializer, CreateRoleSerializer, ListPermissionCategorySerailizer, CreatePermissionCategorySerailizer, ListPermissionSerializer, CreatePermissionSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from account.models import User
+from account.models import User, Role, CustomPermission, PermissionCategory
 
 
 class ListCreateUserAPIView(APIView):
@@ -20,6 +20,83 @@ class ListCreateUserAPIView(APIView):
     def post(self, request):
         if self.request.user.is_superuser:
             serializer = UserCreateSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"error": "Malformed request"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            {"error": "Unauthroized Request. Not enough permissions"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+
+class ListCreateRoleAPIView(APIView):
+    def get(self, request):
+        if self.request.user.is_superuser:
+            roles = Role.objects.all()
+            serializer = ListRoleSerializer(roles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Unauthroized Request. Not enough permissions"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    def post(self, request):
+        if self.request.user.is_superuser:
+            serializer = CreateRoleSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"error": "Malformed request"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            {"error": "Unauthroized Request. Not enough permissions"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+class ListCreatePermissionAPIView(APIView):
+    def get(self, request):
+        if self.request.user.is_superuser:
+            roles = Role.objects.all()
+            serializer = ListPermissionSerializer(roles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Unauthroized Request. Not enough permissions"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    def post(self, request):
+        if self.request.user.is_superuser:
+            serializer = CreatePermissionSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"error": "Malformed request"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            {"error": "Unauthroized Request. Not enough permissions"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+
+class ListCreatePermissionCategoryAPIView(APIView):
+    def get(self, request):
+        if self.request.user.is_superuser:
+            roles = Role.objects.all()
+            serializer = ListPermissionCategorySerailizer(roles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Unauthroized Request. Not enough permissions"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    def post(self, request):
+        if self.request.user.is_superuser:
+            serializer = CreatePermissionCategorySerailizer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)

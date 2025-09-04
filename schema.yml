@@ -1,17 +1,63 @@
 openapi: 3.0.3
 info:
-  title: Thrift-store API
+  title: E-Commerce API
   version: 1.0.0
-  description: This is an api for a thrift store.
+  description: Ecommerce api with advanced features(still building)
 paths:
-  /api/auth/token/:
+  /api/auth/account/create_user:
+    get:
+      operationId: api_auth_account_create_user_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
     post:
-      operationId: auth_token_create
+      operationId: api_auth_account_create_user_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/account/list_user:
+    get:
+      operationId: api_auth_account_list_user_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_auth_account_list_user_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/token:
+    post:
+      operationId: api_auth_token_create
       description: |-
         Takes a set of user credentials and returns an access and refresh JSON web
         token pair to prove the authentication of those credentials.
       tags:
-      - auth
+      - api
       requestBody:
         content:
           application/json:
@@ -31,14 +77,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenObtainPair'
           description: ''
-  /api/auth/token/refresh/:
+  /api/auth/token/refresh:
     post:
-      operationId: auth_token_refresh_create
+      operationId: api_auth_token_refresh_create
       description: |-
         Takes a refresh type JSON web token and returns an access type JSON web
         token if the refresh token is valid.
       tags:
-      - auth
+      - api
       requestBody:
         content:
           application/json:
@@ -58,109 +104,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
-  /api/category/:
-    get:
-      operationId: category_retrieve
-      tags:
-      - category
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-  /api/orders/:
-    get:
-      operationId: orders_retrieve
-      tags:
-      - orders
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
+  /api/category/create:
     post:
-      operationId: orders_create
-      description: It'll create a new order
+      operationId: api_category_create_create
+      description: Verify that the current user has all specified permissions.
       tags:
-      - orders
+      - api
       security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/product/:
-    get:
-      operationId: product_retrieve
-      tags:
-      - product
-      security:
-      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - {}
       responses:
         '200':
           description: No response body
+  /api/category/list:
+    get:
+      operationId: api_category_list_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/product/create:
     post:
-      operationId: product_create
+      operationId: api_product_create_create
       tags:
-      - product
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-  /api/product/{id}/:
-    get:
-      operationId: product_retrieve_2
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSerializerForCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductSerializerForCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductSerializerForCreate'
         required: true
-      tags:
-      - product
       security:
-      - jwtAuth: []
-      - {}
+      - cookieAuth: []
+      - basicAuth: []
       responses:
-        '200':
-          description: No response body
-    put:
-      operationId: product_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - product
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-    patch:
-      operationId: product_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - product
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSerializerForCreate'
+          description: ''
+  /api/product/delete/{id}:
     delete:
-      operationId: product_destroy
+      operationId: api_product_delete_destroy
       parameters:
       - in: path
         name: id
@@ -168,15 +166,414 @@ paths:
           type: integer
         required: true
       tags:
-      - product
+      - api
       security:
-      - jwtAuth: []
-      - {}
+      - cookieAuth: []
+      - basicAuth: []
       responses:
         '204':
           description: No response body
+  /api/product/list:
+    get:
+      operationId: api_product_list_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProductSerializerForListList'
+          description: ''
+  /api/product/retrieve/{id}:
+    get:
+      operationId: api_product_retrieve_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSerializerForList'
+          description: ''
+  /api/product/update/{id}:
+    put:
+      operationId: api_product_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSerializerForUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductSerializerForUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductSerializerForUpdate'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSerializerForUpdate'
+          description: ''
+    patch:
+      operationId: api_product_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProductSerializerForUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProductSerializerForUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProductSerializerForUpdate'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSerializerForUpdate'
+          description: ''
+  /apiorders/:
+    get:
+      operationId: apiorders_retrieve
+      tags:
+      - apiorders
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: apiorders_create
+      description: It'll create a new order
+      tags:
+      - apiorders
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
 components:
   schemas:
+    ConditionEnum:
+      enum:
+      - new
+      - like_new
+      - good
+      - fair
+      - poor
+      type: string
+      description: |-
+        * `new` - New
+        * `like_new` - Like_new
+        * `good` - Good
+        * `fair` - Fair
+        * `poor` - Poor
+    PaginatedProductSerializerForListList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSerializerForList'
+    PatchedProductSerializerForUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        condition:
+          $ref: '#/components/schemas/ConditionEnum'
+        seller:
+          type: integer
+        is_available:
+          type: boolean
+        category:
+          type: integer
+          writeOnly: true
+        category_id:
+          type: integer
+          readOnly: true
+        is_featured:
+          type: boolean
+        views_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductImage'
+          readOnly: true
+    ProductImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        is_primary:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - image
+    ProductSerializerForCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        condition:
+          $ref: '#/components/schemas/ConditionEnum'
+        seller:
+          type: integer
+        is_available:
+          type: boolean
+        category:
+          type: integer
+          writeOnly: true
+        category_id:
+          type: integer
+          readOnly: true
+        is_featured:
+          type: boolean
+        views_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductImage'
+          readOnly: true
+      required:
+      - category
+      - category_id
+      - condition
+      - created_at
+      - id
+      - images
+      - name
+      - price
+      - seller
+      - updated_at
+      - views_count
+    ProductSerializerForList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        condition:
+          $ref: '#/components/schemas/ConditionEnum'
+        seller:
+          type: integer
+        is_available:
+          type: boolean
+        category:
+          type: integer
+          writeOnly: true
+        category_id:
+          type: integer
+          readOnly: true
+        is_featured:
+          type: boolean
+        views_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductImage'
+          readOnly: true
+      required:
+      - category
+      - category_id
+      - condition
+      - created_at
+      - id
+      - images
+      - name
+      - price
+      - seller
+      - updated_at
+      - views_count
+    ProductSerializerForUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        condition:
+          $ref: '#/components/schemas/ConditionEnum'
+        seller:
+          type: integer
+        is_available:
+          type: boolean
+        category:
+          type: integer
+          writeOnly: true
+        category_id:
+          type: integer
+          readOnly: true
+        is_featured:
+          type: boolean
+        views_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductImage'
+          readOnly: true
+      required:
+      - category
+      - category_id
+      - condition
+      - created_at
+      - id
+      - images
+      - name
+      - price
+      - seller
+      - updated_at
+      - views_count
     TokenObtainPair:
       type: object
       properties:
@@ -210,7 +607,10 @@ components:
       - access
       - refresh
   securitySchemes:
-    jwtAuth:
+    basicAuth:
       type: http
-      scheme: bearer
-      bearerFormat: JWT
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
