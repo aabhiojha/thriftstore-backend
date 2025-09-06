@@ -34,8 +34,7 @@ class ListCreateUserAPIView(APIView):
 
 
 # Create role and List Roles API View
-# Initial thought is to only make it accessible to superusers only.
-# I think I should make it accessible to users with specific permission category too.
+# only superusers can view and add roles
 class ListCreateRoleAPIView(APIView):
     def get(self, request):
         if self.request.user.is_superuser:
@@ -63,7 +62,7 @@ class ListCreateRoleAPIView(APIView):
 
 
 # Create Permission and List Permissions API View
-# Only superusers can create and list permissions for now.
+
 class ListCreatePermissionAPIView(APIView):
     def get(self, request):
         if self.request.user.is_superuser:
