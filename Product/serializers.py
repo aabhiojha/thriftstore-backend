@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from account.models import User
+from account.models.models import User
 from .models import Category, Product, ProductImage
 
 

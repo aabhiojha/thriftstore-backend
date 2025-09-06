@@ -3,7 +3,8 @@ from rest_framework.permissions import IsAdminUser, BasePermission
 from .serializers import UserListSerializer, UserCreateSerializer, ListRoleSerializer, CreateRoleSerializer, ListPermissionCategorySerializer, CreatePermissionCategorySerializer, ListPermissionSerializer, CreatePermissionSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from account.models import User, Role, Permission, PermissionCategory
+from account.models.models import User 
+from account.models.permission_models import Role, Permission, PermissionCategory
 
 
 class ListCreateUserAPIView(APIView):
