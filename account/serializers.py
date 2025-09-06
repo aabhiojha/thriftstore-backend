@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import User, PermissionCategory, Permission, Role
+from .models.models import User
+from .models.permission_models import PermissionCategory, Permission, Role
 
 
 class UserListSerializer(serializers.ModelSerializer):
