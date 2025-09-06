@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser, BasePermission
-from .serializers import UserListSerializer, UserCreateSerializer, ListRoleSerializer, CreateRoleSerializer, ListPermissionCategorySerailizer, CreatePermissionCategorySerailizer, ListPermissionSerializer, CreatePermissionSerializer
+from .serializers import UserListSerializer, UserCreateSerializer, ListRoleSerializer, CreateRoleSerializer, ListPermissionCategorySerializer, CreatePermissionCategorySerializer, ListPermissionSerializer, CreatePermissionSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from account.models import User, Role, CustomPermission, PermissionCategory
+from account.models import User, Role, Permission, PermissionCategory
 
 
 class ListCreateUserAPIView(APIView):
@@ -32,6 +32,10 @@ class ListCreateUserAPIView(APIView):
         )
 
 
+
+# Create role and List Roles API View
+# Initial thought is to only make it accessible to superusers only.
+# I think I should make it accessible to users with specific permission category too.
 class ListCreateRoleAPIView(APIView):
     def get(self, request):
         if self.request.user.is_superuser:
@@ -57,11 +61,14 @@ class ListCreateRoleAPIView(APIView):
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
+
+# Create Permission and List Permissions API View
+# Only superusers can create and list permissions for now.
 class ListCreatePermissionAPIView(APIView):
     def get(self, request):
         if self.request.user.is_superuser:
-            roles = Role.objects.all()
-            serializer = ListPermissionSerializer(roles, many=True)
+            permissions = Permission.objects.all()
+            serializer = ListPermissionSerializer(permissions, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
             {"error": "Unauthroized Request. Not enough permissions"},
@@ -87,7 +94,7 @@ class ListCreatePermissionCategoryAPIView(APIView):
     def get(self, request):
         if self.request.user.is_superuser:
             roles = Role.objects.all()
-            serializer = ListPermissionCategorySerailizer(roles, many=True)
+            serializer = ListPermissionCategorySerializer(roles, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
             {"error": "Unauthroized Request. Not enough permissions"},
@@ -96,7 +103,7 @@ class ListCreatePermissionCategoryAPIView(APIView):
 
     def post(self, request):
         if self.request.user.is_superuser:
-            serializer = CreatePermissionCategorySerailizer(data=request.data)
+            serializer = CreatePermissionCategorySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)

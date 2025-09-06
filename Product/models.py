@@ -58,3 +58,4 @@ class ProductImage(CreatedAndUpdated):
     )
     image = models.ImageField(upload_to="products/")
     is_primary = models.BooleanField(default=False)
+    

@@ -83,6 +83,9 @@ class SuperUser(User):
         verbose_name_plural = "Super Users"
 
 
+
+
+# Permission, Permission Category and Role models
 class AbstractFields(models.Model):
     class Meta:
         abstract = True
@@ -100,7 +103,7 @@ class PermissionCategory(AbstractFields):
         return f"{self.name} permission category"
 
 
-class CustomPermission(AbstractFields):
+class Permission(AbstractFields):
     code_name = models.CharField(max_length=100, unique=True)
     category = models.ForeignKey(
         PermissionCategory, on_delete=models.CASCADE, related_name="permissions"
@@ -112,7 +115,7 @@ class CustomPermission(AbstractFields):
 
 class Role(AbstractFields):
     permissions = models.ManyToManyField(
-        CustomPermission, blank=True, related_name="roles"
+        Permission, blank=True, related_name="roles"
     )
 
     def __str__(self):
